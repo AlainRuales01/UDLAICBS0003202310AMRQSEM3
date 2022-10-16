@@ -23,7 +23,6 @@ def deleteData():
 
         
         ses_db_stg.connect()
-        ses_db_stg.execute("SET FOREIGN_KEY_CHECKS = 0")
         ses_db_stg.execute("TRUNCATE TABLE sales_ext")
         ses_db_stg.execute("TRUNCATE TABLE customers_ext")
         ses_db_stg.execute("TRUNCATE TABLE channels_ext")
@@ -31,7 +30,6 @@ def deleteData():
         ses_db_stg.execute("TRUNCATE TABLE products_ext")
         ses_db_stg.execute("TRUNCATE TABLE promotions_ext")
         ses_db_stg.execute("TRUNCATE TABLE times_ext")
-        ses_db_stg.execute("SET FOREIGN_KEY_CHECKS = 1")
         ses_db_stg.dispose()
 
     except:
