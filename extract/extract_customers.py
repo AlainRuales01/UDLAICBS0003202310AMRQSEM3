@@ -1,18 +1,22 @@
 from logging import exception
 from util.db_connection import Db_Connection
+from util.configurationReader import readDataBaseConfigurations
+from util.configurationReader import readRouteConfigurations
 from datetime import datetime
 import pandas as pd
 import traceback
 
 def ext_customers():
+    dbConfiguration = readDataBaseConfigurations()
+    routeConfiguration = readRouteConfigurations()
     try:
         #Variables
-        type = 'mysql'
-        host = 'localhost'
-        port = '3306'
-        user = 'AdminUser'
-        pwd = 'Admin123'
-        db = 'amrqdbstg'
+        type = dbConfiguration["DB_TYPE"]
+        host = dbConfiguration["DB_HOST"]
+        port = dbConfiguration["DB_PORT"]
+        user = dbConfiguration["DB_USER"]
+        pwd = dbConfiguration["DB_PWD"]
+        db = dbConfiguration["DB_TARGET_STG"]
 
         con_db_stg = Db_Connection(type,host,port,user,pwd,db)
         ses_db_stg = con_db_stg.start()
@@ -40,7 +44,7 @@ def ext_customers():
             "cust_email":[]
         }
 
-        customer_csv = pd.read_csv("CSV/customers.csv")
+        customer_csv = pd.read_csv("{}customers.csv".format(routeConfiguration["CSV_ROUTE"]))
         #Process CSV Content
         if not customer_csv.empty:
             for id,fir_nam,las_nam,gen,yea_bir,mar_sta,str_add,pos_cod,cit,sta_pro,cou_id,mai_pho,inc_lev,cre_lim,ema \
@@ -71,9 +75,9 @@ def ext_customers():
 
 
         if customers_dict["cust_id"]:
-            # ses_db_stg.connect().execute("TRUNCATE TABLE channels_ext")
             df_countries_ext = pd.DataFrame(customers_dict)
             df_countries_ext.to_sql('customers_ext', ses_db_stg, if_exists="append",index=False)
+        ses_db_stg.dispose()
     except:
         traceback.print_exc()
     finally:

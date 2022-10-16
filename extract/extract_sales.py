@@ -1,18 +1,22 @@
 from logging import exception
 from util.db_connection import Db_Connection
+from util.configurationReader import readDataBaseConfigurations
+from util.configurationReader import readRouteConfigurations
 from datetime import datetime
 import pandas as pd
 import traceback
 
 def ext_sales():
+    dbConfiguration = readDataBaseConfigurations()
+    routeConfiguration = readRouteConfigurations()
     try:
         #Variables
-        type = 'mysql'
-        host = 'localhost'
-        port = '3306'
-        user = 'AdminUser'
-        pwd = 'Admin123'
-        db = 'amrqdbstg'
+        type = dbConfiguration["DB_TYPE"]
+        host = dbConfiguration["DB_HOST"]
+        port = dbConfiguration["DB_PORT"]
+        user = dbConfiguration["DB_USER"]
+        pwd = dbConfiguration["DB_PWD"]
+        db = dbConfiguration["DB_TARGET_STG"]
 
         con_db_stg = Db_Connection(type,host,port,user,pwd,db)
         ses_db_stg = con_db_stg.start()
@@ -32,7 +36,7 @@ def ext_sales():
             "amount_sold":[]
         }
 
-        sale_csv = pd.read_csv("CSV/sales.csv")
+        sale_csv = pd.read_csv("{}sales.csv".format(routeConfiguration["CSV_ROUTE"]))
         #Process CSV Content
         if not sale_csv.empty:
             for pro_id,cus_id,tim_id,cha_id,prom_id,qua_sol,amo_sol \
@@ -51,9 +55,9 @@ def ext_sales():
 
 
         if sales_dict["prod_id"]:
-            # ses_db_stg.connect().execute("TRUNCATE TABLE channels_ext")
             df_countries_ext = pd.DataFrame(sales_dict)
             df_countries_ext.to_sql('sales_ext', ses_db_stg, if_exists="append",index=False)
+        ses_db_stg.dispose()
     except:
         traceback.print_exc()
     finally:

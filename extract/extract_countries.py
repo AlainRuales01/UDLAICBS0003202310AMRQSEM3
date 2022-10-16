@@ -1,18 +1,22 @@
 from logging import exception
 from util.db_connection import Db_Connection
+from util.configurationReader import readDataBaseConfigurations
+from util.configurationReader import readRouteConfigurations
 from datetime import datetime
 import pandas as pd
 import traceback
 
 def ext_countries():
+    dbConfiguration = readDataBaseConfigurations()
+    routeConfiguration = readRouteConfigurations()
     try:
         #Variables
-        type = 'mysql'
-        host = 'localhost'
-        port = '3306'
-        user = 'AdminUser'
-        pwd = 'Admin123'
-        db = 'amrqdbstg'
+        type = dbConfiguration["DB_TYPE"]
+        host = dbConfiguration["DB_HOST"]
+        port = dbConfiguration["DB_PORT"]
+        user = dbConfiguration["DB_USER"]
+        pwd = dbConfiguration["DB_PWD"]
+        db = dbConfiguration["DB_TARGET_STG"]
 
         con_db_stg = Db_Connection(type,host,port,user,pwd,db)
         ses_db_stg = con_db_stg.start()
@@ -29,7 +33,7 @@ def ext_countries():
             "country_region_id":[]
         }
 
-        country_csv = pd.read_csv("CSV/countries.csv")
+        country_csv = pd.read_csv("{}countries.csv".format(routeConfiguration["CSV_ROUTE"]))
         #Process CSV Content
         if not country_csv.empty:
             for id,nam,reg,reg_id \
@@ -40,9 +44,9 @@ def ext_countries():
                 countries_dict["country_region"].append(reg)
                 countries_dict["country_region_id"].append(reg_id)
         if countries_dict["country_id"]:
-            # ses_db_stg.connect().execute("TRUNCATE TABLE channels_ext")
             df_countries_ext = pd.DataFrame(countries_dict)
             df_countries_ext.to_sql('countries_ext', ses_db_stg, if_exists="append",index=False)
+        ses_db_stg.dispose()
     except:
         traceback.print_exc()
     finally:

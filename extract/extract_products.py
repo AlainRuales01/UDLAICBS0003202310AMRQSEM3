@@ -1,18 +1,22 @@
 from logging import exception
 from util.db_connection import Db_Connection
+from util.configurationReader import readDataBaseConfigurations
+from util.configurationReader import readRouteConfigurations
 from datetime import datetime
 import pandas as pd
 import traceback
 
 def ext_products():
+    dbConfiguration = readDataBaseConfigurations()
+    routeConfiguration = readRouteConfigurations()
     try:
         #Variables
-        type = 'mysql'
-        host = 'localhost'
-        port = '3306'
-        user = 'AdminUser'
-        pwd = 'Admin123'
-        db = 'amrqdbstg'
+        type = dbConfiguration["DB_TYPE"]
+        host = dbConfiguration["DB_HOST"]
+        port = dbConfiguration["DB_PORT"]
+        user = dbConfiguration["DB_USER"]
+        pwd = dbConfiguration["DB_PWD"]
+        db = dbConfiguration["DB_TARGET_STG"]
 
         con_db_stg = Db_Connection(type,host,port,user,pwd,db)
         ses_db_stg = con_db_stg.start()
@@ -36,7 +40,7 @@ def ext_products():
             "prod_min_price":[]
         }
 
-        product_csv = pd.read_csv("CSV/products.csv")
+        product_csv = pd.read_csv("{}products.csv".format(routeConfiguration["CSV_ROUTE"]))
         #Process CSV Content
         if not product_csv.empty:
             for id,nam,des,cat,cat_id,cat_desc,wei_cla,sup_id,sta,lis_pri,min_pri \
@@ -61,9 +65,9 @@ def ext_products():
 
 
         if products_dict["prod_id"]:
-            # ses_db_stg.connect().execute("TRUNCATE TABLE channels_ext")
             df_countries_ext = pd.DataFrame(products_dict)
             df_countries_ext.to_sql('products_ext', ses_db_stg, if_exists="append",index=False)
+        ses_db_stg.dispose()
     except:
         traceback.print_exc()
     finally:
