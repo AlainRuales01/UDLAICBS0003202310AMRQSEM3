@@ -1,30 +1,20 @@
 from logging import exception
-from util.db_connection import Db_Connection
-from datetime import datetime
-from extract.extract_channels import ext_channels
-from extract.extract_countries import ext_countries
-from extract.extract_customers import ext_customers
-from extract.extract_products import ext_products
-from extract.extract_promotions import ext_promotions
-from extract.extract_sales import ext_sales
-from extract.extract_times import ext_times
 from util.deleteDataBaseData import deleteData
-from util import configurationReader
-import pandas as pd
+from util.insert_ETLSync import insert_ETLSync
+from util.extract_etl import execute_extract
+from util.transform_etl import execute_transform
+from datetime import datetime
 import traceback
 
-def executeExtract():
-    ext_countries()
-    ext_promotions()
-    ext_times()
-    ext_channels()
-    ext_products()
-    ext_customers()
-    ext_sales()
+
+
+
 
 try:
-    deleteData()
-    executeExtract()
+    # deleteData()
+    etl_process = insert_ETLSync()
+    #execute_extract()
+    execute_transform(etl_process)
 except:
     traceback.print_exc()
 finally:
