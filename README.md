@@ -12,6 +12,8 @@ Antes de la ejecución del proyecto es necesario crear las diferentes bases de d
 - DataBaseCreation.sql: Script utilizado para crear las bases de datos amrqdbsor y amrqdbstg 
 - TablesCreation.sql: Script utilizado para crear las tablas en la base de datos amrqdbsor
 - TablesCreationStg.sql: Script utilizado para la creación de tablas en la base de datos amrqdbstg
+- TablesCreationTra.sql: Script utilizado para la creación de tablas de transform en la base de datos amrqdbstg
+- TableCreationETLSync.sql: Script utilizado para la creación de una tabla que tendrá la información de los procesos ETL ejecutados
 
 <h2>Paquetes necesarios</h2>
 
