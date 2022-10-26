@@ -4,7 +4,7 @@
 
 <h2>Descripción de repositorio</h2>
 En este repositorio, se tiene un proyecto que implementa concepto de bodega de datos, en donde se tienen métodos de extracción, transformación y carga de datos desde CSV.
-El proyecto fue realizado con python 3.10.8 y con base de datos MySQL 8
+El proyecto fue realizado con python 3.10.8 y con base de datos MySQL 8.
 
 <h2>Creación de bases de datos</h2>
 Antes de la ejecución del proyecto es necesario crear las diferentes bases de datos dentro de MySQL. Para esto, se deben ejecutar los siguientes scripts:
@@ -14,6 +14,9 @@ Antes de la ejecución del proyecto es necesario crear las diferentes bases de d
 - TablesCreationStg.sql: Script utilizado para la creación de tablas en la base de datos amrqdbstg
 - TablesCreationTra.sql: Script utilizado para la creación de tablas de transform en la base de datos amrqdbstg
 - TableCreationETLSync.sql: Script utilizado para la creación de una tabla que tendrá la información de los procesos ETL ejecutados
+
+<h2>IMPORTANTE</h2>
+Las tablas de transform tienen agregadas un campo llamado ETL_SYNC_ID, el cual representa el proceso ETL en el cual un registro fue agregado. Este valor es utilizado posteriormente en el proceso de load para tomar solo los datos de las tablas transform que fueron sincronizados en el proceso actual. Esto se hace con el objetivo de comparar cambios con datos que recientemente fueron agregados.
 
 <h2>Paquetes necesarios</h2>
 
