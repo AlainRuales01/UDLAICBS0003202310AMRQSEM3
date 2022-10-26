@@ -7,10 +7,6 @@ from util.etl_process.load_etl import execute_load
 from datetime import datetime
 import traceback
 
-
-
-
-
 try:
     deleteData()
     etl_process = insert_ETLSync()

@@ -1,4 +1,4 @@
-USE amrqdbsTG;
+USE amrqdbstg;
 CREATE TABLE CHANNELS_EXT 
     ( 
      CHANNEL_ID VARCHAR(20)  NOT NULL , 
